@@ -8,6 +8,8 @@ RSpec.describe "nil in Ruby" do
     # capture the exception thrown, when we send nil a message that it
     # does not understand.
 
+    require 'pry'
+
     begin
       nil.a_method_that_does_not_exist
     rescue Exception => exception
