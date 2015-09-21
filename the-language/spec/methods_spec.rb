@@ -99,6 +99,8 @@ RSpec.describe "methods in ruby" do
     end
   end
 
+
+
   context "methods on objects" do
 
     let(:an_object) { MyClass.new }
@@ -124,8 +126,43 @@ RSpec.describe "methods in ruby" do
       expect( an_object.calls_the_private_method ).to eq( :the_private_value )
     end
 
+    class A
+      private
+      def priv
+        "Private"
+      end
+
+      protected
+      def prot
+        "Protected"
+      end
+
+    end
+
+    class B < A
+      def pub_priv
+        self.priv
+      end
+
+      def pub_prot
+        self.prot
+      end
+    end
+
     it "raises an error if a private method has an explicit receiver" do
       expect { an_object.calls_the_private_method_on_self }.to raise_error( NoMethodError, /private method/ )
+    end
+
+    it "raises an error with self on private methods" do
+      b = B.new
+      expect{ b.pub_priv}.to raise_error(NoMethodError)
+    end
+
+    it "returns the value with self on protected method" do
+      b = B.new
+      expect( b.pub_prot).to eq("Protected")
+
+
     end
 
   end
