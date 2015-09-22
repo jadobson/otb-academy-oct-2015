@@ -14,10 +14,18 @@
 #   about_triangle_project_2.rb
 #
 def triangle(a, b, c)
-  # WRITE THIS CODE
+  triangle_sides = [a,b,c].uniq.length
+
+  case triangle_sides
+  when 1
+    :equilateral
+  when 2
+    :isosceles
+  else
+    :scalene
+  end
 end
 
 # Error class used in part 2.  No need to change this code.
 class TriangleError < StandardError
 end
-
