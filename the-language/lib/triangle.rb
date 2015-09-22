@@ -15,6 +15,8 @@
 #
 def triangle(a, b, c)
   a, b, c = [a,b,c].sort
+  raise TriangleError unless a > 0
+  raise TriangleError unless a + b > c
   return :equilateral if a == c
   return :isosceles if a == b || b == c
   :scalene
