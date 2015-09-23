@@ -1,24 +1,33 @@
 class StringCalculator
+  attr_reader :string, :delimiters, :delimiters_regex
 
   def initialize(string)
     @string = string
-    @delimiter = @string[/^\/\/(.+)\n/m, 1].to_s
-    @delimiters = @delimiter.tr('[', '').split(']')
+    @delimiters = @string[/^\/\/(.+)\n/m, 1].to_s.tr('[', '').split(']')
+
+    # Regex escape each delimiter block
+    @delimiters.map! do |v|
+      v = Regexp.escape(v)
+    end
+
+    # Create the delimiters regex for splitting
+    @delimiters_regex = "|#{@delimiters.join("|")}" unless @delimiters.empty?
   end
 
   def add
     negatives = []
-    result = @string.split(/[\n,#{Regexp.escape(@delimiters.join)}]/).inject(0) do |sum, num|
+    result = @string.split(/(\n|,#{@delimiters_regex})/).inject(0) do |sum, num|
       negatives << num.strip if num.to_i < 0
       sum += num.to_i if num.to_i <= 1000
       sum
     end
+
     if negatives.size > 0
       raise "Negatives not allowed (#{negatives.join(", ")})"
     end
+
     result
   end
-
 end
 
 RSpec.describe "string_calculator_text" do
@@ -64,6 +73,10 @@ RSpec.describe "string_calculator_text" do
 
   it "allows multiple delimiters" do
     expect(StringCalculator.new("//[*][%]\n1*2%3").add).to eq(6)
+  end
+
+  it "should look for specific lengths in delimiters" do
+    expect(StringCalculator.new("//[***][%%%]\n1***2%3").add).to eq(3)
   end
 
 end
