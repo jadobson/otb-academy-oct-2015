@@ -93,4 +93,9 @@ RSpec.describe "Bowling" do
   	game = BowlingGame.new([10, 0, 5, 5, 3, 3] + Array.new(14, 0))
   	expect( game.score ).to eq(46) 
 	end
+
+  it "scores a mixed game" do
+    game = BowlingGame.new([2,4,5,3,1,6,8,2,0,2,6,4,10,0,3,0,10,0,4,5])
+    expect( game.score ).to eq(97)
+  end
 end
