@@ -3,16 +3,20 @@ class BowlingFrame
 		@frame = frame
 	end
 
-	def score(next_frame_score = 0, single: false)
-		frame_total = @frame.inject(:+)
+	def score(next_frame_total = 0)
+		total = frame_total
 
 		if strike?
-			frame_total += next_frame_score
+			total += next_frame_total
 		elsif spare?
-			frame_total += 10
+			total += 10
 		else
-			frame_total
+			total
 		end
+	end
+
+	def frame_total
+		@frame_total ||= @frame.inject(:+)
 	end
 
 	private
@@ -22,25 +26,38 @@ class BowlingFrame
 	end
 
 	def spare?
-		!strike? && score == 10
+		!strike? && frame_total == 10
 	end
 end
 
 class BowlingGame
-	def initialize(tries)
-		@frames = tries.each_slice(2).to_a
+	def initialize(turns)
+		@frames = turns.each_slice(2).to_a
 	end
 
 	def score
 		total_score = 0
 
-		@frames.each_with_index do |frame, i| 
-			current_frame = BowlingFrame.new(frame) 
-			next_frame = BowlingFrame.new(@frames[i + 1])
-			total_score += current_frame.score(next_frame.score)
+		@frames.each_with_index do |frame_turns, i| 
+			next_frame_total = last_frame?(i) ? 0 : get_next_frame(i).frame_total
+			total_score += get_current_frame(frame_turns).score(next_frame_total)
 		end
 		
 		total_score
+	end
+
+	private
+
+	def get_current_frame(frame_turns)
+		BowlingFrame.new(frame_turns)
+	end
+
+	def get_next_frame(current_frame_index)
+		BowlingFrame.new(@frames[current_frame_index + 1])
+	end
+
+	def last_frame?(i)
+		i == @frames.size - 1
 	end
 end
 
@@ -65,6 +82,9 @@ RSpec.describe "Bowling" do
   end
 
   it "can handle strikes" do
+  	#require 'pry'
+  	#binding.pry
+
    	game = BowlingGame.new([10, 0, 5, 3] + Array.new(16, 0))
   	expect( game.score ).to eq(26) 	
   end
