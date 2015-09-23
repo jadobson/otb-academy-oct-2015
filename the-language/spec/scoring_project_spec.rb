@@ -27,11 +27,63 @@
 #
 # Your goal is to write the score method.
 
+ONE_SCORE  = 100
+FIVE_SCORE = 50
+
 def score(dice)
-  # You need to write this method
+  return 0 if dice.empty?
+
+  count = {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+  }
+
+  dice.each do |num|
+    count[:"#{num}"] += 1
+  end
+
+  score ||= 0
+
+  # Find triples
+  triples = count.select do |key, val|
+    key_i = key.to_s.to_i
+
+    val >= 3 unless key_i == 1 || key == 5
+  end
+
+  if count[:"1"] >= 3
+    score += 1000
+    count[:"1"] -= 3
+  end
+
+  triples.each do |key, val|
+    key_i = key.to_s.to_i
+
+    score += key_i * 100
+    count[:"#{key}"] -= 3
+  end
+
+  score += ONE_SCORE  * count[:"1"] if count[:"1"] > 0
+  score += FIVE_SCORE * count[:"5"] if count[:"5"] > 0
+
+  # score = dice.inject(0) do |sum, num|
+  #   sum +=  if num == 5
+  #             FIVE_SCORE
+  #           elsif num == 1
+  #             ONE_SCORE
+  #           else
+  #             0
+  #           end
+  # end
+
+  score
 end
 
-RSpec.describe "scorign a game of greed" do
+RSpec.describe "scoring a game of greed", scoring: true do
   it "scores an empty list as 0" do
     expect( score([]) ).to eq( 0 )
   end
@@ -73,4 +125,3 @@ RSpec.describe "scorign a game of greed" do
   end
 
 end
-
