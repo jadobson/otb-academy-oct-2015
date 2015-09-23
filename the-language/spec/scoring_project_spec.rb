@@ -27,8 +27,28 @@
 #
 # Your goal is to write the score method.
 
-ONE_SCORE  = 100
-FIVE_SCORE = 50
+module Scoring
+  DEFAULT_SCORE = 0
+  ONE_SCORE     = 100
+  FIVE_SCORE    = 50
+
+  DEFAULT_TRIPLE = 100
+  ONE_TRIPLE     = 1000
+end
+
+def find_triples(count)
+  count.select do |key, val|
+    val >= 3
+  end
+end
+
+def single_score(count, amount = Scoring::DEFAULT_SCORE)
+  if count <= 0
+    Scoring::DEFAULT_SCORE
+  else
+    count * amount
+  end
+end
 
 def score(dice)
   return 0 if dice.empty?
@@ -40,33 +60,21 @@ def score(dice)
     count[num] += 1
   end
 
-  # Find triples
-  triples = count.select do |key, val|
-    val >= 3 unless key == 1 # || key == 5
-  end
-
-  if count[1] >= 3
-    score += 1000
-    count[1] -= 3
-  end
+  triples = find_triples(count)
 
   triples.each do |key, val|
-    score += key * 100
+    if key == 1
+      score_increment = Scoring::ONE_TRIPLE
+    else
+      score_increment = Scoring::DEFAULT_TRIPLE
+    end
+
+    score += key * score_increment
     count[key] -= 3
   end
 
-  score += ONE_SCORE  * count[1] if count[1] > 0
-  score += FIVE_SCORE * count[5] if count[5] > 0
-
-  # score = dice.inject(0) do |sum, num|
-  #   sum +=  if num == 5
-  #             FIVE_SCORE
-  #           elsif num == 1
-  #             ONE_SCORE
-  #           else
-  #             0
-  #           end
-  # end
+  score += single_score(count[1], Scoring::ONE_SCORE)
+  score += single_score(count[5], Scoring::FIVE_SCORE)
 
   score
 end
