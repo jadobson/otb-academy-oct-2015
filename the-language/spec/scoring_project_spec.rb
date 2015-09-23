@@ -33,42 +33,30 @@ FIVE_SCORE = 50
 def score(dice)
   return 0 if dice.empty?
 
-  count = {
-    "1": 0,
-    "2": 0,
-    "3": 0,
-    "4": 0,
-    "5": 0,
-    "6": 0,
-  }
+  count = Hash.new(0)
+  score ||= 0
 
   dice.each do |num|
-    count[:"#{num}"] += 1
+    count[num] += 1
   end
-
-  score ||= 0
 
   # Find triples
   triples = count.select do |key, val|
-    key_i = key.to_s.to_i
-
-    val >= 3 unless key_i == 1 || key == 5
+    val >= 3 unless key == 1 # || key == 5
   end
 
-  if count[:"1"] >= 3
+  if count[1] >= 3
     score += 1000
-    count[:"1"] -= 3
+    count[1] -= 3
   end
 
   triples.each do |key, val|
-    key_i = key.to_s.to_i
-
-    score += key_i * 100
-    count[:"#{key}"] -= 3
+    score += key * 100
+    count[key] -= 3
   end
 
-  score += ONE_SCORE  * count[:"1"] if count[:"1"] > 0
-  score += FIVE_SCORE * count[:"5"] if count[:"5"] > 0
+  score += ONE_SCORE  * count[1] if count[1] > 0
+  score += FIVE_SCORE * count[5] if count[5] > 0
 
   # score = dice.inject(0) do |sum, num|
   #   sum +=  if num == 5
