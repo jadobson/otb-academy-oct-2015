@@ -1,3 +1,31 @@
+class BowlingFrame 
+	def initialize(frame)
+		@frame = frame
+	end
+
+	def score(next_frame_score = 0, single: false)
+		frame_total = @frame.inject(:+)
+
+		if strike?
+			frame_total += next_frame_score
+		elsif spare?
+			frame_total += 10
+		else
+			frame_total
+		end
+	end
+
+	private
+
+	def strike?
+		@frame.include?(10) 
+	end
+
+	def spare?
+		!strike? && score == 10
+	end
+end
+
 class BowlingGame
 	def initialize(tries)
 		@frames = tries.each_slice(2).to_a
@@ -7,25 +35,12 @@ class BowlingGame
 		total_score = 0
 
 		@frames.each_with_index do |frame, i| 
-			frame_total = calculate_frame_total(frame)
-			if frame_total == 10 
-				if frame.include?(10) 
-					frame_total += calculate_frame_total(@frames[i + 1])
-				else
-					frame_total += 10
-				end
-			end
-
-			total_score += frame_total
+			current_frame = BowlingFrame.new(frame) 
+			next_frame = BowlingFrame.new(@frames[i + 1])
+			total_score += current_frame.score(next_frame.score)
 		end
 		
 		total_score
-	end
-
-	private
-
-	def calculate_frame_total(frame)
-		frame.inject(:+)
 	end
 end
 
