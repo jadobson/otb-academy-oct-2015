@@ -37,7 +37,11 @@ class ShoppingBasket
     sets_of_5 = discount_sets_of_size(5, sets)
 
     better_discounts_available(sets).times do |index|
-      sets_of_3[index].push(sets_of_5[index].pop)
+      from_set, to_set = sets_of_5[index], sets_of_3[index]
+      set_diff = from_set.clone
+
+      to_set.each { |to_item| set_diff.delete_if { |from_item| from_item.to_s == to_item.to_s } }
+      to_set << from_set.delete(set_diff[0])
     end
 
     sets
