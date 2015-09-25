@@ -20,7 +20,7 @@ RSpec.describe "sandwich code" do
   end
 
   it "can count lines in file" do
-    expect( count_lines(EXAMPLE_FILE) ).to eq( __ )
+    expect( count_lines(EXAMPLE_FILE) ).to eq( 4 )
   end
 
   def find_line(file_name)
@@ -33,7 +33,7 @@ RSpec.describe "sandwich code" do
   end
 
   it "can find a line" do
-    expect( find_line(EXAMPLE_FILE) ).to eq( __ )
+    expect( find_line(EXAMPLE_FILE) ).to eq( "test\n" )
   end
 
   # What do you notice about `find_line` and `count_lines`?
@@ -71,15 +71,20 @@ RSpec.describe "sandwich code" do
   end
 
   it "can count lines in file again" do
-    expect( count_lines2(EXAMPLE_FILE) ).to eq( __ )
+    expect( count_lines2(EXAMPLE_FILE) ).to eq( 4 )
   end
 
   def find_line2(file_name)
+    file_sandwich(file_name) do |file|
+      while line = file.gets
+        return line if line.match(/e/)
+      end
+    end
     # Rewrite find_line using the file_sandwich library function.
   end
 
   it "can count lines in file, again" do
-    expect( find_line2(EXAMPLE_FILE) ).to eq( __ )
+    expect( find_line2(EXAMPLE_FILE) ).to eq( "test\n" )
   end
 
   def count_lines3(file_name)
@@ -93,7 +98,7 @@ RSpec.describe "sandwich code" do
   end
 
   it "supports the sandwich by passing a block to open" do
-    expect( count_lines3("example_file.txt") ).to eq( __ )
+    expect( count_lines3(EXAMPLE_FILE) ).to eq( 4 )
   end
 
 end
