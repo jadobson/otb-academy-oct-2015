@@ -8,7 +8,8 @@ class BottleNumber
   end
 
   def self.factory_class(num)
-    ObjectSpace.each_object(Class).select { |c| c < self }.find { |c| c.handles?(num) }
+    descendants = ObjectSpace.each_object(Class).find_all { |c| c < self }.sort_by { |c| c.name }
+    descendants.find { |c| c.handles?(num) }
   end
 
   def self.handles?(num)
@@ -28,7 +29,7 @@ class BottleNumber
   end
 
   def remaining
-    "#{@num}"
+    @num
   end
 
   def pluralize
@@ -77,12 +78,16 @@ class BottleNumber6 < BottleNumber
     num % 6 == 0
   end
 
+  def action
+    "Take one bottle down and pass it around"
+  end
+
   def remaining
-    (@num / 6).to_s
+    @num / 6
   end
 
   def pluralize
-    "six pack"
+    remaining > 1 ? "six packs" : "six pack"
   end
 end
 
@@ -90,7 +95,7 @@ class Bottles
   def verse(num)
     bottle_number = BottleNumber.factory(num)
 
-    "#{bottle_number.remaining.capitalize} #{bottle_number.pluralize} of beer on the wall, "\
+    "#{bottle_number.remaining.to_s.capitalize} #{bottle_number.pluralize} of beer on the wall, "\
     "#{bottle_number.remaining} #{bottle_number.pluralize} of beer.\n"\
     "#{bottle_number.action}, #{bottle_number.next.remaining} #{bottle_number.next.pluralize} of beer on the wall.\n"
   end
