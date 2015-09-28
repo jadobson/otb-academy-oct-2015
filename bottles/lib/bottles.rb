@@ -1,23 +1,41 @@
 class Bottles
+  def verse(num)
+    string = "#{how_many_beers_on_the_wall(num).capitalize}, #{bottle_count(num)} of beer.\n"
+    string << action(num)
+    string << " #{how_many_beers_on_the_wall(next_count(num))}.\n"
+  end
+
+  def verses(num, num2)
+    num.downto(num2).collect { |v| self.verse(v) }.join("\n") + "\n"
+  end
+
   def sing
-    verses(99, 0)
+    verses(99,0)
   end
 
-  def verses(finish, start)
-    string = ''
-    finish.downto(start).each { |count| string << verse(count) + "\n" }
-    string
-  end
+  private
 
-  def verse(count)
-    if count == 0
-      "No more bottles of beer on the wall, no more bottles of beer.\nGo to the store and buy some more, 99 bottles of beer on the wall.\n"
-    elsif count == 1
-      "#{count} bottle of beer on the wall, #{count} bottle of beer.\nTake it down and pass it around, no more bottles of beer on the wall.\n"
-    elsif count == 2
-      "#{count} bottles of beer on the wall, #{count} bottles of beer.\nTake one down and pass it around, #{count - 1} bottle of beer on the wall.\n"
+  def action(num)
+    if num > 0
+      "Take #{bottle_descripter(num)} down and pass it around,"
     else
-      "#{count} bottles of beer on the wall, #{count} bottles of beer.\nTake one down and pass it around, #{count - 1} bottles of beer on the wall.\n"
+      "Go to the store and buy some more,"
     end
+  end
+
+  def how_many_beers_on_the_wall(num)
+    "#{bottle_count(num)} of beer on the wall"
+  end
+
+  def bottle_descripter(num)
+    num == 1 ? "it" : "one"
+  end
+
+  def bottle_count(count)
+    { 0 => "no more bottles", 1 => "1 bottle" }.fetch(count, "#{count} bottles")
+  end
+
+  def next_count(count)
+    count == 0 ? 99 : count - 1
   end
 end
