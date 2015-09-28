@@ -4,79 +4,58 @@ class BottleNumber
   end
 
   def decrement
-    return 99 if @num == 0
+    return 99 if none?
     @num - 1
   end
 
   def no_more
-    @num == 0 ? "no more" : "#{@num}"
-  end
-
-  def bottles_remaining
-    if @num == 1
-      "no more bottles"
-    else
-      "#{decrement} #{bottles_or_bottle(@num - 1)}"
-    end
+    none? ? "no more" : "#{@num}"
   end
 
   def it_or_one
-    @num == 1 ? "it" : "one"
+    last? ? "it" : "one"
   end
 
   def action
-    if @num == 0
+    if none?
       "Go to the store and buy some more"
     else
       "Take #{it_or_one} down and pass it around"
     end
   end
 
-  def bottles_or_bottle(num = @num)
-    num == 1 ? "bottle" : "bottles"
+  def bottles_or_bottle
+    last? ? "bottle" : "bottles"
+  end
+
+  private
+
+  def last?
+    @num == 1
+  end
+
+  def none?
+    @num == 0
   end
 end
 
 class Bottles
   def verse(num)
-      "#{no_more(num).capitalize} #{bottles_or_bottle(num)} of beer on the wall, #{no_more(num)} #{bottles_or_bottle(num)} of beer.\n" +
-        "#{action(num)}, #{bottles_remaining(num)} of beer on the wall.\n"
+    bottle_number = BottleNumber.new(num)
+    next_bottle = BottleNumber.new(bottle_number.decrement)
+
+    "#{bottle_number.no_more.capitalize} #{bottle_number.bottles_or_bottle} of beer on the wall, "\
+    "#{bottle_number.no_more} #{bottle_number.bottles_or_bottle} of beer.\n"\
+    "#{bottle_number.action}, #{next_bottle.no_more} #{next_bottle.bottles_or_bottle} of beer on the wall.\n"
   end
 
   def verses(num, num2)
     result = ""
-    num.downto(num2).each do |v|
-      result += verse(v) + "\n"
-    end
+    num.downto(num2).each { |v| result += verse(v) + "\n" }
     result
   end
 
   def sing
     verses(99,0)
-  end
-
-  private
-  def action(num)
-    BottleNumber.new(num).action
-  end
-
-  def bottles_or_bottle(num)
-    BottleNumber.new(num).bottles_or_bottle
-  end
-
-  def it_or_one(num)
-    BottleNumber.new(num).it_or_one
-  end
-
-  def bottles_remaining(num)
-    BottleNumber.new(num).bottles_remaining
-  end
-
-  def decrement(num)
-    BottleNumber.new(num).decrement
-  end
-
-  def no_more(num)
-    BottleNumber.new(num).no_more
   end
 end
