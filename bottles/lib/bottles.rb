@@ -1,10 +1,18 @@
 class BottleNumber
   def self.factory(num)
     begin
-      BottleNumber.const_get("BottleNumber#{num}").new(num)
+      factory_class(num).new(num)
     rescue NameError
       BottleNumber.new(num)
     end
+  end
+
+  def self.factory_class(num)
+    ObjectSpace.each_object(Class).select { |c| c < self }.find { |c| c.handles?(num) }
+  end
+
+  def self.handles?(num)
+    true
   end
 
   def initialize(num)
@@ -33,6 +41,10 @@ class BottleNumber
 end
 
 class BottleNumber0 < BottleNumber
+  def self.handles?(num)
+    num == 0
+  end
+
   def decrement
     99
   end
@@ -47,6 +59,10 @@ class BottleNumber0 < BottleNumber
 end
 
 class BottleNumber1 < BottleNumber
+  def self.handles?(num)
+    num == 1
+  end
+
   def action
     "Take it down and pass it around"
   end
@@ -57,8 +73,12 @@ class BottleNumber1 < BottleNumber
 end
 
 class BottleNumber6 < BottleNumber
+  def self.handles?(num)
+    num % 6 == 0
+  end
+
   def remaining
-    "1"
+    (@num / 6).to_s
   end
 
   def pluralize
