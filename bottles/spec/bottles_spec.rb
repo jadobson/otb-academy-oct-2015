@@ -30,11 +30,21 @@ describe "singing 99 bottles of beer" do
   end
 
   it "can string a few verses together" do
-    expected = "8 bottles of beer on the wall, 8 bottles of beer.\nTake one down and pass it around, 7 bottles of beer on the wall.\n\n7 bottles of beer on the wall, 7 bottles of beer.\nTake one down and pass it around, 6 bottles of beer on the wall.\n\n6 bottles of beer on the wall, 6 bottles of beer.\nTake one down and pass it around, 5 bottles of beer on the wall.\n\n"
+    expected = "8 bottles of beer on the wall, 8 bottles of beer.\nTake one down and pass it around, 7 bottles of beer on the wall.\n\n7 bottles of beer on the wall, 7 bottles of beer.\nTake one down and pass it around, 1 six pack of beer on the wall.\n\n1 six pack of beer on the wall, 1 six pack of beer.\nTake one down and pass it around, 5 bottles of beer on the wall.\n\n"
     expect( song.verses(8, 6) ).to eq( expected )
   end
 
   it "can sing the whole song" do
     expect( song.sing ).to eq( song.verses(99, 0) )
+  end
+
+  it "can sing about 6 bottles being a six pack" do
+    expected = "1 six pack of beer on the wall, 1 six pack of beer.\nTake one down and pass it around, 5 bottles of beer on the wall.\n"
+    expect( song.verse(6) ).to eq( expected )
+  end
+
+  it "can sing about 7 bottles of beer decrementing to one six pack" do
+    expected = "7 bottles of beer on the wall, 7 bottles of beer.\nTake one down and pass it around, 1 six pack of beer on the wall.\n"
+    expect( song.verse(7) ).to eq( expected )
   end
 end
