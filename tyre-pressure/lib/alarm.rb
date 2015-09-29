@@ -1,14 +1,14 @@
 class Alarm
-  def initialize(sensor)
-  	@sensor = sensor
-  end
-
-  def on?
-  	@alarm 
+  def initialize(sensor, notifier)
+  	@sensor, @notifier = sensor, notifier
   end
 
 	def check
-  	@alarm = !in_range?(@sensor.sample_pressure)
+  	if in_range?(@sensor.sample_pressure)
+  		@notifier.normal_range
+  	else
+  		@notifier.out_of_bounds
+  	end
   end
 
   private
