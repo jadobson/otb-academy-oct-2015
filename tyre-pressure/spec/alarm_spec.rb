@@ -1,9 +1,10 @@
 require 'alarm'
 require 'sensor'
+require 'blink_notifier'
 
 RSpec.describe "tyre pressure alarm" do
 	let(:sensor) { Sensor.new }
-	let(:notifier) { double('notifier') }
+	let(:notifier) { BlinkNotifier.new }
   let(:alarm) { Alarm.new(sensor, notifier) }
 
   it "triggers the alarm if the tyre pressure is below the normal range (17.5)" do
