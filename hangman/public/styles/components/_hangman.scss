@@ -182,7 +182,7 @@
 
   &__man {
     &-head {
-      background: none;
+      background: none !important;
       border-radius: 100%;
       border: 5px solid #000000;
       height: 3em;
@@ -201,7 +201,7 @@
 
     &-arm-left {
       height: 5px;
-      left: 40%;
+      left: 39%;
       top: 40%;
       width: 17%;
     }
@@ -255,4 +255,3 @@
     text-align: center;
   }
 }
-

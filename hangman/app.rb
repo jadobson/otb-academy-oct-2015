@@ -18,7 +18,7 @@ class HangmanController < Sinatra::Base
 
   post '/play/' do
     settings.game.play(params['word'])
-    erb :play, locals: { game: settings.game, error_message: '' }
+    erb :play, locals: { game: settings.game, error_message: settings.game.error_message }
   end
 
   get '/guess/?' do
@@ -27,19 +27,8 @@ class HangmanController < Sinatra::Base
 
   post '/guess/' do
     input = params['input']
-    error_message = ''
-
-    if settings.game.invalid_guess?(input) || settings.game.repeat_guess?(input)
-      if settings.game.invalid_guess?(input)
-        error_message = "<strong>#{input}</strong> is not a valid guess. Try again."
-      else
-        error_message = "You've already guessed <strong>#{input}</strong>!"
-      end
-    end
-
     settings.game.guess(input)
-
-    erb :play, locals: { game: settings.game, error_message: error_message }
+    erb :play, locals: { game: settings.game, error_message: settings.game.error_message }
   end
 end
 
