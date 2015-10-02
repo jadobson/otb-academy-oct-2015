@@ -25,13 +25,13 @@ RSpec.describe "hangman game" do
 
   it "updates the board on incorrect guesses" do
     game.guess('u')
-    expect(game.incorrect_guesses_string).to eq('u')
+    expect(game.incorrect_guess_string).to eq('u')
   end
 
   it "updates the board on repeat incorrect guesses" do
     game.guess('u')
     game.guess('z')
-    expect(game.incorrect_guesses_string).to eq('u, z')
+    expect(game.incorrect_guess_string).to eq('u, z')
   end
 
   it "updates the board with a mixture of correct and incorrect guesses" do
@@ -40,7 +40,7 @@ RSpec.describe "hangman game" do
     game.guess('z')
     game.guess('e')
     expect(game.state).to eq('te_t')
-    expect(game.incorrect_guesses_string).to eq('u, z')
+    expect(game.incorrect_guess_string).to eq('u, z')
   end
 
   it "can determine when a game is won from a sequence of correct guesses" do
@@ -70,5 +70,24 @@ RSpec.describe "hangman game" do
   it "can determine when a game is won from a correct word guess" do
     game.guess('test')
     expect(game.won?).to eq(true)
+  end
+
+  it "throws an error message on repeat guesses" do
+    game.guess('e')
+    game.guess('e')
+    expect(game.error?).to eq(true)
+    expect(game.error).to eq("You've already guessed <strong>e</strong>! Try again.")
+  end
+
+  it "throws an error message on non alphabetic guesses" do
+    game.guess('1')
+    expect(game.error?).to eq(true)
+    expect(game.error).to eq("<strong>1</strong> is not a valid guess. Try again.")
+  end
+
+  it "throws an error message on word guesses of the incorrect length" do
+    game.guess('tes')
+    expect(game.error?).to eq(true)
+    expect(game.error).to eq("<strong>tes</strong> is not a valid guess. Try again.")
   end
 end

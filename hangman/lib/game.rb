@@ -1,44 +1,46 @@
+require_relative 'input'
 require_relative 'word'
 
 class Game
-  attr_reader :incorrect_guesses
+  attr_reader :incorrect_guesses, :error
 
   def play(word)
-    @correct_word = ''
     @correct_guesses = {}
+    @correct_word = ''
+    @error = ''
     @incorrect_guesses = []
-    @error_message = ''
     @word = Word.new(word)
   end
 
-  def guess(input)
-    set_error_message(input)
-    if @error_message == ''
-      if @word.match?(input)
-        add_correct_guess(input)
+  def guess(input_string)
+    @error = Input.new(input_string, @word.word.length).validate(previous_guesses)
+
+    unless error?
+      if @word.match?(input_string)
+        add_correct_guess(input_string)
       else
-        add_incorrect_guess(input)
+        add_incorrect_guess(input_string)
       end
     end
   end
 
-  def error_message
-    @error_message
-  end
-
   def state
-    if @correct_word.length > 1
+    if correct_word_guessed?
       @correct_word
     else
       @word.state(@correct_guesses)
     end
   end
 
-  def incorrect_guesses_count
+  def incorrect_guesses?
+    incorrect_guess_count > 0
+  end
+
+  def incorrect_guess_count
     @incorrect_guesses.size
   end
 
-  def incorrect_guesses_string
+  def incorrect_guess_string
     @incorrect_guesses.join(', ')
   end
 
@@ -51,42 +53,36 @@ class Game
   end
 
   def lost?
-    incorrect_guesses_count == incorrect_guess_limit
+    incorrect_guess_count == incorrect_guess_limit
+  end
+
+  def error?
+    @error.length > 0
   end
 
   private
 
-  def repeat_guess?(input)
-    @incorrect_guesses.include?(input) || @correct_guesses.fetch(input, false)
+  def previous_guesses
+    @correct_guesses.keys + @incorrect_guesses
   end
 
-  def invalid_guess?(input)
-    (input.length > 1 && input.length != @word.word.length) || input[/^[a-zA-Z]+$/].nil?
+  def correct_word_guessed?
+    @correct_word.length > 0
   end
 
-  def add_correct_guess(input)
-    if input.size > 1
-      @correct_word = input
+  def add_correct_guess(input_string)
+    if input_string.length > 1
+      @correct_word = input_string
     else
-      @correct_guesses[input] = @word.letter_indexes(input)
+      @correct_guesses[input_string] = @word.letter_indexes(input_string)
     end
   end
 
-  def add_incorrect_guess(input)
-    @incorrect_guesses << input
+  def add_incorrect_guess(input_string)
+    @incorrect_guesses << input_string
   end
 
   def incorrect_guess_limit
     11
-  end
-
-  def set_error_message(input)
-    @error_message = determine_error(input).gsub("#input", input)
-  end
-
-  def determine_error(input)
-    return "<strong>#input</strong> is not a valid guess. Try again." if invalid_guess?(input)
-    return "You've already guessed <strong>#input</strong>!" if repeat_guess?(input)
-    ""
   end
 end

@@ -18,7 +18,7 @@ class HangmanController < Sinatra::Base
 
   post '/play/' do
     settings.game.play(params['word'])
-    erb :play, locals: { game: settings.game, error_message: settings.game.error_message }
+    erb :play, locals: { game: settings.game }
   end
 
   get '/guess/?' do
@@ -26,9 +26,8 @@ class HangmanController < Sinatra::Base
   end
 
   post '/guess/' do
-    input = params['input']
-    settings.game.guess(input)
-    erb :play, locals: { game: settings.game, error_message: settings.game.error_message }
+    settings.game.guess(params['input'])
+    erb :play, locals: { game: settings.game }
   end
 end
 

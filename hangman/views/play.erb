@@ -1,7 +1,7 @@
 <%= erb :'partials/header' %>
   <div class="container">
     <div class="hangman">
-      <div class="hangman__image hangman__image--<%= game.incorrect_guesses_count %> <%= "hangman__image--dead" if game.lost? %>">
+      <div class="hangman__image hangman__image--<%= game.incorrect_guess_count %> <%= "hangman__image--dead" if game.lost? %>">
         <span class="hangman__image__item hangman__gallows-base"></span>
         <span class="hangman__image__item hangman__gallows-pole"></span>
         <span class="hangman__image__item hangman__gallows-arm"></span>
@@ -15,16 +15,16 @@
         <span class="hangman__image__item hangman__man-leg-right"></span>
       </div>
       <div class="hangman__word"><%= game.state %></div>
-      <% if game.incorrect_guesses_count > 0 %>
+      <% if game.incorrect_guesses? %>
       <div class="hangman__incorrect-guesses">
-        Incorrect Guesses (<%= game.incorrect_guesses_count %>): <span class="hangman__incorrect-guesses__list"><%= game.incorrect_guesses_string %></span>
+        Incorrect Guesses (<%= game.incorrect_guess_count %>): <span class="hangman__incorrect-guesses__list"><%= game.incorrect_guess_string %></span>
       </div>
       <% end %>
       <div class="hangman__buttons">
         <% unless game.finished? %>
-          <% if error_message.length > 0 %>
+          <% if game.error? %>
             <div class="alert alert-warning">
-              <%= error_message %>
+              <%= game.error %>
             </div>
           <% end %>
           <form method="POST" action="/guess/" class="form-inline">
