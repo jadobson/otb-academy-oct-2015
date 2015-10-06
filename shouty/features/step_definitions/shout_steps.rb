@@ -1,17 +1,20 @@
 require 'shouty'
 
-Given(/^Lucy is (\d+)m from Sean$/) do |distance|
+Given(/^(\w+\b) is (\d+)m from (\w+)$/) do |person, distance, person_two|
   @network = Network.new
-  @lucy = Person.new(@network)
-  @sean = Person.new(@network)
-  @lucy.move_to(distance)
+  @subscribers = Hash.new { |hash, key| hash[key] = Person.new(@network) }
+  @subscribers[person].move_to(distance)
 end
 
-When(/^Sean shouts "([^"]*)"$/) do |message|
+When(/^(\w+\b) shouts "([^"]*)"$/) do |person, message|
   @seans_message = message
-  @sean.shout(message)
+  @subscribers[person].shout(message)
 end
 
-Then(/^Lucy hears Sean's message$/) do
-  expect(@lucy.messages_heard).to include(@seans_message)
+Then(/^(\w+\b) hears (\w+)'s message$/) do |person, person_two|
+  expect(@subscribers[person].messages_heard).to include(@seans_message)
+end
+
+Then(/^(\w+\b) does not hear (\w+)'s message$/) do |person, person_two|
+  expect(@subscribers[person].messages_heard).not_to include(@seans_message)
 end

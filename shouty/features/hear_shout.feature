@@ -16,3 +16,8 @@ Feature: Hear Shout
     Given Lucy is 15m from Sean
     When Sean shouts "Free Coffee!"
     Then Lucy hears Sean's message
+
+  Scenario: Listener is not within range
+    Given Fred is 60m from Sean
+    When Sean shouts "Free Sausages!"
+    Then Fred does not hear Sean's message

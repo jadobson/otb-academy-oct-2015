@@ -1,15 +1,19 @@
 class Person
+  attr_reader :location
+
   def initialize(network)
     @network = network
     @network.subscribe(self)
     @messages_heard = []
+    @location = 0
   end
 
   def move_to(location)
+    @location = location.to_i
   end
 
   def shout(message)
-    @network.broadcast(message)
+    @network.broadcast(message, @location)
     self
   end
 
@@ -32,7 +36,17 @@ class Network
     self
   end
 
-  def broadcast(message)
-    @subscribers.each { |subscriber| subscriber.hear(message) }
+  def broadcast(message, location)
+    subscribers_within_range(location).each { |subscriber| subscriber.hear(message) }
+  end
+
+  private
+
+  def subscribers_within_range(location)
+    @subscribers.find_all { |subscriber| (subscriber.location - location).abs <= range }
+  end
+
+  def range
+    50
   end
 end
