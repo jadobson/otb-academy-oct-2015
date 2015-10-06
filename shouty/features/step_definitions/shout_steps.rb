@@ -1,9 +1,13 @@
 require 'shouty'
 
-Given(/^(\w+\b) is (\d+)m from (\w+)$/) do |person, distance, person_two|
+Given(/^the following subscribers:$/) do |table|
   @network = Network.new
-  @subscribers = Hash.new { |hash, key| hash[key] = Person.new(@network) }
-  @subscribers[person].move_to(distance)
+  @subscribers = Hash.new
+  table.hashes.each do |hash|
+    p hash
+    @subscribers[hash['name']] = Person.new(@network)
+    @subscribers[hash['name']].move_to(hash['location'])
+  end
 end
 
 When(/^(\w+\b) shouts "([^"]*)"$/) do |person, message|

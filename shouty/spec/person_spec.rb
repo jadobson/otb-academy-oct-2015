@@ -10,7 +10,8 @@ describe Person do
   it "broadasts shouts using the network" do
     sean = Person.new(network)
     message = "Free Bagels!"
-    location = 0
+    location = [53.393655, -2.184552]
+    sean.move_to(location)
 
     expect(network).to receive(:broadcast).with(message, location)
 
@@ -20,6 +21,7 @@ describe Person do
   it "records messages heard" do
     lucy = Person.new(network)
     message = "Free Bagels!"
+    lucy.move_to([53.393655, -2.184555])
     lucy.hear(message)
 
     expect(lucy.messages_heard).to include(message)

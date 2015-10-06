@@ -7,17 +7,21 @@ Feature: Hear Shout
   Business Rules:
     - Range is 50m
 
+  Background:
+    Given the following subscribers:
+      |name|location|
+      |Sean|0|
+      |Lucy|15|
+      |Fred|60|
+
   Scenario: Listener is within range
-    Given Lucy is 15m from Sean
     When Sean shouts "Free Bagels!"
     Then Lucy hears Sean's message
 
   Scenario: Listener hears a different message
-    Given Lucy is 15m from Sean
     When Sean shouts "Free Coffee!"
     Then Lucy hears Sean's message
 
   Scenario: Listener is not within range
-    Given Fred is 60m from Sean
     When Sean shouts "Free Sausages!"
     Then Fred does not hear Sean's message
